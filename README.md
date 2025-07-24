@@ -25,3 +25,24 @@ A microservices-based movie streaming platform with an API Gateway, Inventory AP
    ```bash
    git clone <repository-url>
    cd crud-master
+3. **Configure Environment**:
+
+    Copy `.env.example` to `.env` and update credentials if needed (defaults provided for testing).
+
+4. **Start VMs**:
+    ```bash
+    vagrant up
+    ```
+    This creates three VMs: `gateway-vm` (port 8080), `inventory-vm` (port 8081, PostgreSQL 5432), and `billing-vm` (port 8082, RabbitMQ 5672/15672).
+
+
+5. **Access VMs (optional)**:
+    ```bash
+    vagrant ssh gateway-vm
+    vagrant ssh inventory-vm
+    vagrant ssh billing-vm
+6. **Manage Services with PM2: Inside a VM**:
+    ````bash
+    sudo pm2 list
+    sudo pm2 stop <app_name>
+    sudo pm2 start <app_name>

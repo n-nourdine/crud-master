@@ -1,0 +1,144 @@
+openapi: 3.0.3
+info:
+  title: CRUD Master API Gateway
+  version: 1.0.0
+  description: API Gateway for a movie streaming platform, routing requests to Inventory and Billing services.
+servers:
+  - url: http://localhost:8080
+paths:
+  /api/movies:
+    get:
+      summary: Retrieve all movies or filter by title
+      parameters:
+        - in: query
+          name: title
+          schema:
+            type: string
+          description: Filter movies by title (partial match)
+      responses:
+        '200':
+          description: List of movies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Movie'
+    post:
+      summary: Create a new movie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Movie'
+      responses:
+        '200':
+          description: Created movie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+    delete:
+      summary: Delete all movies
+      responses:
+        '200':
+          description: All movies deleted
+          content:
+            text/plain:
+              schema:
+                type: string
+  /api/movies/{id}:
+    get:
+      summary: Retrieve a movie by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Movie details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+        '404':
+          description: Movie not found
+    put:
+      summary: Update a movie by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Movie'
+      responses:
+        '200':
+          description: Updated movie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+        '404':
+          description: Movie not found
+    delete:
+      summary: Delete a movie by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Movie deleted
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Movie not found
+  /api/billing:
+    post:
+      summary: Send a billing order to RabbitMQ
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '200':
+          description: Message posted to billing queue
+          content:
+            text/plain:
+              schema:
+                type: string
+components:
+  schemas:
+    Movie:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+    Order:
+      type: object
+      properties:
+        user_id:
+          type: string
+        number_of_items:
+          type: integer
+        total_amount:
+          type: number
